@@ -1,0 +1,292 @@
+/* Structure ******************************/
+
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+
+
+body {
+	margin: 3px;
+	font-family: Arial;
+	font-size: 14px;
+	background-color: #ffffff;
+	color: #333333;
+	line-height: 1.5;
+	text-align: center; /* weeeee ieeeee */
+}
+
+#top {
+	margin-left: 130px;
+}
+
+#container {
+	max-width: 80%;
+	width: 80%;
+	margin: auto;
+	padding: 1px;
+	text-align: left;
+}
+
+#side {
+	float: left;
+	width: 110px;
+	margin-left: -100%;
+	padding: 2px;
+}
+
+#side li {
+	list-style:none;
+}
+
+#main {
+	width: 100%;
+	float: left;
+}
+
+#page {
+	margin-left: 130px;
+}
+
+#menu2 {
+	border-top: 1px solid #CCCCCC;
+	margin-top: 7px;
+	padding-top: 5px;
+}
+
+/* Menu Colours ******************************/
+
+#menu a:hover {
+	background-color: #AA00FF;
+}
+#menu2 a:hover {
+	background-color: #00AAFF;
+}
+
+/* Headings ******************************/
+
+h1 {
+	color: #333333;
+	padding: 2px 20px;
+	margin: 20px 0px;
+	font-family: Arial;
+	font-size: 25pt;
+	width: 70%;
+	border-bottom: 2px solid #333333;
+}
+
+h1 a, h1 a:link, h1 a:visited, h1 a:hover {
+	/* Fucking Microsoft let me inherit */
+	/*color: inherit;*/
+	color: #333333;
+	text-decoration: none;
+	/*background-color: inherit;*/
+	background-color: #ffffff;	
+	border: none;
+}
+
+h2 a, h2 a:link, h2 a:visited, h2 a:hover {
+    border: none !important;
+}
+
+/* Unique ******************************/
+
+
+
+#messages {
+	color: #333333;
+	font-size: 25pt;
+	font-weight: bold;
+	margin: 5px;
+	padding: 5px;
+	text-align: center;
+}
+
+
+#footer {
+	margin: 20px 0px;
+	font-size: 9px;
+	color: #666666;
+}
+
+#footer a {
+	border: none;
+	color: #666666;
+	/* color: inherit; */
+	/* background-color: inherit; */
+	background-color: #ffffff;
+	padding: 0px 2px;
+
+}
+
+#footer a:hover {
+	color: #000000 !important;
+}
+
+
+/* Content Tags ******************************/
+
+
+.hidden {
+	display: none;
+}
+
+.small {
+	font-size: 10px;
+}
+
+p {
+	margin: 4px 0px;
+}
+
+
+hr {
+	border: 1px solid #dddddd;
+	margin: 20px 0px;
+	width: 70%;
+}
+
+
+a, a:link, a:visited {
+	border-bottom: 1px solid #FF3300; /* FF4400 */
+	color: #000000;
+	font-weight: bold;
+	padding: 2px;
+	text-decoration: none;
+}
+
+a:hover {
+	margin-top: 1px;
+	background-color: #FF3300; /* #FF6600 */
+	color: #FFFFFF;
+}
+
+img {
+	border: 0px;
+}
+
+ul a {
+	border: 0px solid black !important;
+}
+ul.biglist {
+	list-style: none;
+	font-size: 18pt;
+}
+
+
+blockquote {
+	/*display: inline;
+	color: #cccccc;
+	width: 10px;*/
+	display: block;	
+	width: 100%;
+	background-color: #eeeeee;
+	padding: 6px;
+	border-left: #333333 5px solid;
+	overflow: auto;
+	overflow-x: auto;
+	overflow-y: visible !important;
+}
+
+blockquote .head {
+	display: block;
+	line-height: 1;
+	margin: 0px 0px 10px 0px; /* bottom */
+}
+
+
+.collapse {
+	display: none;
+}
+.swf {
+ 	padding: 5px;
+	background-color: #e5e5e5;
+	width: 740px;
+	height: 480px;
+	display: block;
+}
+
+
+.swf a, .swf a:link, .swf a:visited {
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
+	font-family: arial;
+	font-weight: bold;
+	display: block;
+	text-align: center;
+}
+.swf a:hover {
+	background-color: #e5e5e5;
+	color: #000000;
+}
+
+#childlist {
+	margin: 20px 0px;
+	display: table;
+}
+
+#childlist * {
+	margin: 0;
+	padding: 0;
+}
+#childlist a {
+	font-weight: normal;
+	border-left: 2px solid #000000 !important;
+	margin: 20px 0px;
+	padding: 0px 10px;
+	display: block;
+}
+#childlist li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#childlist h2 {
+	font-weight: bold;
+}
+
+#childlist li p {
+	margin-left: 10px;
+}
+
+
+/* Edit Form ******************************/
+
+input, textarea {
+	color: #000000;
+	font-family: Arial;
+	font-size: 14px;
+	padding: 1px;
+	line-height: 1.4;
+}
+.button {
+	font-weight: bold;
+}
+
+
+#editform {
+	border-top: 2px solid #333;
+	width: 70%;
+	margin-top: 10px;
+	padding: 4px 20px;
+}
+
+.textinput {
+	width: 400px;
+	max-width: 70%;
+}
+
+.areainput {
+	width: 100%;
+	height: 300px;
+	font-family: monospace;
+}
+
+.smallarea {
+	height: 100px;
+}
+
+
