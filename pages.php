@@ -17,9 +17,9 @@ require("./ubbextend.php");
 pages
 -----
 
-slug   varchar(16)
-title  varchar(32)
-body   varchar(1024)
+slug   varchar(255)
+title  varchar(255)
+body   text
 excerpt   varchar(1024)
 lastupdate   int
 
@@ -27,8 +27,17 @@ pages_tags
 -----------
 
 id		smallint
-slug	varchar(16)
-tag		varchar(16)
+slug	varchar(255)
+tag		varchar(255)
+
+blog
+----
+
+slug	varchar(255)
+title	varchar(255)
+body	text
+excerpt varchar(1024)
+created	int
 
 */
 
@@ -39,6 +48,9 @@ function microtime_float() {
 function array_place($str, $arr) {
 	return array_map(create_function('$k,$v', 'return '.$str.';'), 
 					array_keys($arr), array_values($arr));
+}
+function is_blog($page) {	// 20110101 or 201101011
+	return ctype_digit($page) && (strlen($page) == 8 || strlen($page) == 9);
 }
 function redirect($url) {
 	header("Location: $url");
@@ -75,8 +87,11 @@ $page_array = array(
 	"html" => "",			// Generated HTML
 	"excerpt" => "",		// Short body
 	"lastupdate" => 0,		// UTS of last update
+	"created" => 0,			// UTS of creation for blogs
+	"isblog" => false,		// is this page a blog post or not
 	"tags" => array(),		// array of tags as array("tag1","tag2","tag3")
-	"childs" => array()		// array of children as arrays of arrays like $page_array
+	"childs" => array(),	// array of children as arrays of arrays like $page_array
+	"blogposts" => array()	// array of blog posts
 );
 
 $message = array();
@@ -95,19 +110,33 @@ if($page == "all")
 	));
 }
 
+else if ($page == "blog")
+{
+	$blogs = $db->select_rows("SELECT slug,title,body,excerpt,created FROM blog ORDER BY created DESC");
+	$page_array = array_merge(array_merge($page_array, array_shift($blogs)), array(
+		"isblog" => true,
+		"isspecial" => true,
+		"blogposts" => $blogs
+	));
+}
 
 /// Regular Pages ///////////////////
 
 if(!$page_array["isspecial"])
 {
+	$page_array["isblog"] = is_blog($page);
 	$page_escape = mysql_real_escape_string($page);
 	
+	
+	$table = ($page_array["isblog"] ? "blog" : "pages");
+	
 	// Merge with $page_array
-	if($newarray = $db->select_row("SELECT * FROM pages WHERE slug='$page_escape' LIMIT 1"))
+	if($newarray = $db->select_row("SELECT * FROM $table WHERE slug='$page_escape' LIMIT 1"))
 		$page_array = array_merge($page_array, $newarray);
 	
 	// Page if database result carries a lastupdate variable
-	$page_array["isreal"] = ($page_array["lastupdate"] != null);
+	$page_array["isreal"] = ($page_array["isblog"] ? ($page_array["created"] != 0)
+		: ($page_array["lastupdate"] != 0));
 	
 	// Pages can exist without being in the database,
 	// If they exist in database:
@@ -126,6 +155,18 @@ if(!$page_array["isspecial"])
 		 FROM pages, pages_tags
 		 WHERE pages.slug = pages_tags.slug AND pages_tags.tag = '$page_escape'
 		 ORDER BY pages.title");
+		 
+	
+	if ($page == "home") {
+		$page_array["blogposts"] = $db->select_rows("SELECT slug,title,excerpt,created FROM blog ORDER BY created DESC");
+	}
+	else {// Get any blog posts tagged to this page
+		$page_array["blogposts"] = $db->select_rows(
+			"SELECT blog.slug, blog.title, blog.excerpt, blog.created
+			FROM blog, pages_tags
+			WHERE blog.slug = pages_tags.slug AND pages_tags.tag = '$page_escape'
+			ORDER BY blog.created DESC");
+	}
 	
 	/// Actions to perform on page ///////////////////
 	
@@ -144,6 +185,7 @@ if(!$page_array["isspecial"])
 	// ACTION : delete
 	elseif($action == "delete") {
 		
+		
 		// We can delete pages. A confirmation button is needed to make it
 		// harder to accidently delete pages
 		
@@ -156,7 +198,7 @@ if(!$page_array["isspecial"])
 		elseif(isset($_POST["confirm"])) {
 			
 			// Do the page deletion
-			$result = $db->query("DELETE FROM pages WHERE slug='$page_escape'");
+			$result = $db->query("DELETE FROM $table WHERE slug='$page_escape'");
 			
 			if(!$result) {
 				$messages[] = "<small>".mysql_error()."</small>";
@@ -189,6 +231,10 @@ if(!$page_array["isspecial"])
 	elseif($action == "rename") {
 		if(!$page_array["isreal"]) {
 			$messages[] = "This page doesn't exist in the database";
+		}
+		
+		elseif($page_array["isblog"]) {
+			$messages[] = "Can't rename a blog post";
 		}
 		
 		// Only rename if new name is posted
@@ -248,15 +294,22 @@ if(!$page_array["isspecial"])
 				"slug" => $page,
 				"title" => stripslashes($_POST["title"]),
 				"body" => stripslashes($_POST["body"]),
-				"excerpt" => stripslashes($_POST["excerpt"]),
-				"lastupdate" => time()
+				"excerpt" => stripslashes($_POST["excerpt"])
 			));
-			
+
+			// Non blog posts have a last update time
+			if (!$page_array["isblog"])
+				$arraytoinsert["lastupdate"] = time();	
+
+			// Doesn't exist yet but it is a blog
+			else if (!$page_array["isreal"])
+				$arraytoinsert["created"] = time();
+				
 			// Update or insert depends on if page is in database.
 			// Hope to god database hasn't changed.
 			$result = $page_array["isreal"] ? 
-				$db->update_rows("UPDATE pages SET %s WHERE slug='$page_escape'", $arraytoinsert) :
-				$db->insert_row("INSERT INTO pages %s VALUES %s", $arraytoinsert);
+				$db->update_rows("UPDATE $table SET %s WHERE slug='$page_escape'", $arraytoinsert) :
+				$db->insert_row("INSERT INTO $table %s VALUES %s", $arraytoinsert);
 			
 			if(!$result)
 				$messages[] = "<small>".mysql_error()."</small>";

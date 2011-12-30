@@ -90,6 +90,9 @@ h2 a, h2 a:link, h2 a:visited, h2 a:hover {
     border: none !important;
 }
 
+h1 small {
+	font-size: 13pt;
+}
 /* Unique ******************************/
 
 
